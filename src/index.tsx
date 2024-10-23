@@ -13,7 +13,8 @@ import ErrorBoundary from './component/ErrorBoundries/ErrorBoundries';
 import LoginProvider from './contexts/loginContext/loginProvider';
 import NetInfo from '@react-native-community/netinfo';
 import CustomModal from '@Component/CustomModal/CustomModal';
-import { FirebaseNotification } from '@Service/NotificationServices/NotificationServices';
+import {FirebaseNotification} from '@Service/NotificationServices/NotificationServices';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 export default function App() {
   const [isAnimationFinished, setIsAnimationFinished] = React.useState(
@@ -72,36 +73,38 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <ApiClientProvider>
-        <StatusBar
-          translucent={true}
-          backgroundColor={Colors.TRANSPARENT}
-          barStyle="dark-content"
-        />
-        <LoginProvider>
-          {/* {!isAnimationFinished ? (
+      <SafeAreaProvider>
+        <ApiClientProvider>
+          <StatusBar
+            translucent={true}
+            backgroundColor={Colors.TRANSPARENT}
+            barStyle="dark-content"
+          />
+          <LoginProvider>
+            {/* {!isAnimationFinished ? (
             <LottieWrapper handleSubmit={handleSubmit} />
           ) : (
       
           )} */}
-          <AuthNavigator />
-        </LoginProvider>
-        <Toast config={toastConfig} />
-        {isConnected ? (
-          <></>
-        ) : (
-          <CustomModal
-            changeDeleteModalVisible={changeDeleteModalVisible}
-            setisDeleteAccountVisible={setisDeleteAccountVisible}
-            isDeleteAccountVisible={isDeleteAccountVisible}
-            title={'Internet Unavailable'}
-            desc={'Internet connection lost. Please connect again.'}
-            isNetConnection={isConnected}
-            primaryBtnTxt="Retry"
-          />
-        )}
-        <Spinner />
-      </ApiClientProvider>
+            <AuthNavigator />
+          </LoginProvider>
+          <Toast config={toastConfig} />
+          {isConnected ? (
+            <></>
+          ) : (
+            <CustomModal
+              changeDeleteModalVisible={changeDeleteModalVisible}
+              setisDeleteAccountVisible={setisDeleteAccountVisible}
+              isDeleteAccountVisible={isDeleteAccountVisible}
+              title={'Internet Unavailable'}
+              desc={'Internet connection lost. Please connect again.'}
+              isNetConnection={isConnected}
+              primaryBtnTxt="Retry"
+            />
+          )}
+          <Spinner />
+        </ApiClientProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }

@@ -18,6 +18,7 @@ import H6 from '@Component/Headings/H6';
 import H4 from '@Component/Headings/H4';
 import H3 from '@Component/Headings/H3';
 import H5 from '@Component/Headings/H5';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import Icon from '../Icon/Icon';
 
 type IHeaderProps = {
@@ -32,6 +33,7 @@ type IHeaderProps = {
 
 export default function Header(props: IHeaderProps) {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const {
     title = '',
@@ -44,7 +46,7 @@ export default function Header(props: IHeaderProps) {
   } = props;
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.container, containerStyle, insets.top ? {paddingTop: insets.top} : null]}>
       {isLogo && (
         <View
           style={{
