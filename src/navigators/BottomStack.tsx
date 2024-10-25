@@ -1,57 +1,51 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import React, {useState} from 'react';
-import {Image, Platform, StyleSheet, View} from 'react-native';
+import React from 'react';
+import {Image, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {
-  Card1,
-  Card2,
-  HOF,
-  HomeIconBot,
-  MalePng,
-  RewardIcon,
-  Services,
-  TiersIcon,
-  account,
-} from '../assets/logo';
+import {HOF, HomeIconBot, MalePng, RewardIcon} from '../assets/logo';
 
-import NavigationRoutes from './NavigationRoutes';
-import Profile from '@Container/AppContainer/Profile/Profile';
-import HomeScreen from '@Container/AppContainer/Home/HomeScreen';
-import {Colors} from '@Theme/Colors';
-import TierScreen from '@Container/AppContainer/Tiers/TierScreen';
-import RewardScreen from '@Container/AppContainer/Rewards/RewardScreen';
-import ServicesScreen from '@Container/AppContainer/Services/index';
-import H6 from '@Component/Headings/H6';
-import ProfileSetting from '@Container/AppContainer/ProfileSetting/ProfileSetting';
 import Performance from '@Container/AppContainer/AllPerformance/Performance';
 import HallOfFame from '@Container/AppContainer/HallOfFame';
+import HomeScreen from '@Container/AppContainer/Home/HomeScreen';
+import ProfileSetting from '@Container/AppContainer/ProfileSetting/ProfileSetting';
+import {Colors} from '@Theme/Colors';
+import NavigationRoutes from './NavigationRoutes';
 const Tab = createBottomTabNavigator();
 
 const RenderTabBarIcon = ({source, color, focused}) => {
   return (
-    <View style={styles.tabBarIconWrapper}>
+    <>
       {focused && (
-  
         <View
           style={[
-            styles.tabBarShape,
-            {top: Platform.OS === 'android' ? -12 : -19},
+            {
+              paddingHorizontal: 44,
+              paddingVertical: 30,
+              alignSelf: 'center',
+              position: 'absolute',
+              backgroundColor: '#040C17',
+              top: 6,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: '#00B2FF',
+            },
           ]}
         />
-        
       )}
 
       <Image
         source={source}
         style={{
-          width: '100%',
+          // width: '100%',
           resizeMode: 'contain',
           flex: 1,
           tintColor: color,
+          marginTop: 7,
+          width: 20,
+          // height: 20,
         }}
       />
-
-    </View>
+    </>
   );
 };
 
@@ -121,28 +115,15 @@ const BottomTabs = props => {
           shadowRadius: 4.65,
           elevation: 8,
           width: '100%',
-          height:
-            Platform.OS === 'android'
-              ? 69
-              : 85 - insets.bottom + (insets.bottom ? +40 : 0),
-          paddingTop:
-            insets.bottom !== 0 ? (Platform.OS === 'android' ? 10 : 20) : 0,
+
+          height: 90 + insets.bottom,
         },
         tabBarLabelStyle: {
-          includeFontPadding: false,
           fontFamily: 'Montserrat-Medium',
           fontSize: 10,
-          marginTop: 4,
-          position: 'relative',
-          top: Platform.OS === 'android' ? -15 : 0,
+          marginBottom: 30,
         },
-        tabBarItemStyle: {
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingHorizontal: 0,
-        },
-        tabBarAllowFontScaling: false,
+        tabBarItemStyle: {},
         tabBarActiveTintColor: Colors.WHITE,
         tabBarInactiveTintColor: '#ADB0C2',
       }}
@@ -163,31 +144,3 @@ const BottomTabs = props => {
   );
 };
 export default BottomTabs;
-
-const styles = StyleSheet.create({
-  tabBarIconWrapper: {
-    width: 30,
-    height: 20,
-    position: 'relative',
-  },
-  tabBarShape: {
-    // width: '100%',
-    // height: '100%',
-    paddingHorizontal: 50,
-    paddingVertical: 22,
-    marginTop: 6,
-    alignSelf: 'center',
-    position: 'absolute',
-    backgroundColor: '#040C17', // Color of the border
-    bottom: 0,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderTopColor: '#00B2FF',
-    borderBottomColor: '#00B2FF',
-    borderRightColor: '#00B2FF',
-    borderLeftColor: '#00B2FF',
-
-    // borderBottomRightRadius: 15, // Adjust border radius as needed
-    // borderBottomLeftRadius: 15, // Adjust border radius as needed
-  },
-});
