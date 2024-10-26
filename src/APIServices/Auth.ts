@@ -85,13 +85,16 @@ export const getPrivacyPolicy = async (params: any) => {
 };
 
 export const deleteUser = async (params: any) => {
+  console.log(params?.userData,'paramsparamsparams');
   
   const { data } = await apiRequest({
-    url: `${SERVICE_CONFIG_URLS.PLAYER.DELETE_ACCOUNT}/${params?.parentId}` ,
+    url: `${SERVICE_CONFIG_URLS.PLAYER.DELETE_ACCOUNT}/${params?.userData}` ,
     method: API_CONFIG.DELETE,
     params,
+    showToast:true,
+    showSuccessToast:true
   });
-  
+  console.log(data,'urlurlurl')
   return data;
 };
 

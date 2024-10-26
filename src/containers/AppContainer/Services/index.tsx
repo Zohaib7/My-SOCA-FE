@@ -21,7 +21,6 @@ import EmailModal from './EmailModal';
 
 const ServicesScreen = ({route}) => {
   const {isEmail,isGuest}=route?.params || {}
-  console.log(route?.params ,'isGuestisGuestisGuest');
   
   const [selectedLocation, setSelectedLocation] = useState<string>(null);
   const locationModal = useModal();

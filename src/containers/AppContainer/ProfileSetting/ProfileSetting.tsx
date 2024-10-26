@@ -1,33 +1,39 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useContext, useState} from 'react';
-import Header from '@Component/AppHeader';
-import H2 from '@Component/Headings/H2';
-import Metrics from '@Utility/Metrics';
-import {Colors, Fonts} from '@Theme/index';
-import useProfileSettingContainer from './ProfileSettingContainer';
-import FlatListHandler from '@Component/FlatlistHandler';
-import RenderMenuItem from '@Component/RenderMenuItem/RenderMenuItem';
-import ButtonView from '@Component/ButtonView';
-import H4 from '@Component/Headings/H4';
+import { getParentDetail } from '@Api/App';
+import { deleteUser } from '@Api/Auth';
 import {
-  FaqsIcon,
+  DeleteIcon,
   NotificationIconNew,
   PerformanceButtonSvg,
   SampleAward,
   SignoutSvg,
 } from '@Asset/logo';
+import Header from '@Component/AppHeader';
+import ButtonView from '@Component/ButtonView';
 import CustomModal from '@Component/CustomModal/CustomModal';
-import loginContext from '@Context/loginContext';
-import {LoginContext} from '@Context/loginContext/types';
-import {navigate} from '@Service/navigationService';
-import NavigationRoutes from '@Navigator/NavigationRoutes';
-import H6 from '@Component/Headings/H6';
-import CustomToggle from '@Component/CustomToggle/CustomToggle';
 import ToggleSwitch from '@Component/CustomToggle/CustomToggle';
+import FlatListHandler from '@Component/FlatlistHandler';
+import H2 from '@Component/Headings/H2';
+import H4 from '@Component/Headings/H4';
+import H6 from '@Component/Headings/H6';
+import RenderMenuItem from '@Component/RenderMenuItem/RenderMenuItem';
+import { STORAGE_KEYS } from '@Constants/queryKeys';
+import loginContext from '@Context/loginContext';
+import { LoginContext } from '@Context/loginContext/types';
+import NavigationRoutes from '@Navigator/NavigationRoutes';
+import { navigate } from '@Service/navigationService';
+import { getItem } from '@Service/storageService';
+import { useBoundStore } from '@Store/index';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Colors, Fonts } from '@Theme/index';
+import Metrics from '@Utility/Metrics';
+import React, { useContext, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import useProfileSettingContainer from './ProfileSettingContainer';
 
 const ProfileSetting = () => {
   const [isDeleteAccountVisible, setIsDeleteAccountVisible] =
     React.useState(false);
+
   const {handleLogoutUser} = useContext(loginContext) as LoginContext;
   const changeDeleteModalVisible = isDelete => {
     if (isDelete == true) {
@@ -39,7 +45,7 @@ const ProfileSetting = () => {
   };
   const [isEnabled, setIsEnabled] = useState(false);
 
-  const handleMutate = (value) => {
+  const handleMutate = value => {
     setIsEnabled(value);
   };
 
@@ -94,19 +100,40 @@ const ProfileSetting = () => {
         </View>
         {/* <GeneralSetting /> */}
         <View style={{marginBottom: Metrics.scale(31)}}>
-        <H2 text="General" style={styles.totalGamePlayedTitle} />
+          <H2 text="General" style={styles.totalGamePlayedTitle} />
 
-        <View style={{flex: 1,flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:10}} >
-              <View style={{flexDirection:'row',alignItems:'center',marginLeft:Metrics.scale(20)}}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: 10,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginLeft: Metrics.scale(20),
+              }}>
               <NotificationIconNew />
-              <H2 text="Notifications" style={{ ...Fonts.Medium(Fonts.Size.normal, Colors.Colors.WHITE),marginLeft:Metrics.scale(20)}}/>
-              </View>
-  
-        <ToggleSwitch boolean={isEnabled} handleMutate={handleMutate} />
+              <H2
+                text="Notifications"
+                style={{
+                  ...Fonts.Medium(Fonts.Size.normal, Colors.Colors.WHITE),
+                  marginLeft: Metrics.scale(20),
+                }}
+              />
+            </View>
+
+            <ToggleSwitch boolean={isEnabled} handleMutate={handleMutate} />
           </View>
-          </View>
-        <ReachOutUs menuProfileSettingList={menuProfileSettingList} />
-        <PrivicyPolicy />
+        </View>
+        <ReachOutUs
+          menuProfileSettingList={menuProfileSettingList}
+          handleLogoutUserz={handleLogoutUser}
+        />
+        <PrivicyPolicy handleLogoutUser={handleLogoutUser} />
         <CustomModal
           changeDeleteModalVisible={changeDeleteModalVisible}
           setIsDeleteAccountVisible={setIsDeleteAccountVisible}
@@ -139,6 +166,32 @@ const GeneralSetting = () => {
 };
 
 const ReachOutUs = ({menuProfileSettingList}: any) => {
+  const [isDeleteUserAccountVisible, setIsDeleteUserAccountVisible] =
+    React.useState(false);
+  const userData = getItem(STORAGE_KEYS.GET_PARENT_USER_DETAILS);
+  const {data: parentData} = useQuery(
+    [STORAGE_KEYS.GET_PARENT_DATA],
+    () => getParentDetail({parentId: userData}),
+    {cacheTime: 0, staleTime: 0},
+  );
+  const {handleLogoutUser} = useContext(loginContext) as LoginContext;
+
+  const {mutate: deleteAccount} = useMutation(deleteUser, {
+    onSuccess: data => {
+      handleLogoutUser();
+    },
+    onError: (e: object) => {
+      console.log(e, 'error');
+    },
+  });
+  const changeDeleteAccountModalVisible = isDelete => {
+    if (isDelete == true) {
+      setIsDeleteUserAccountVisible(!isDeleteUserAccountVisible);
+      deleteAccount({userData: parentData[0]?.Email_id});
+    } else {
+      setIsDeleteUserAccountVisible(!isDeleteUserAccountVisible);
+    }
+  };
   const renderItem = ({item, index}: any) => {
     // Define the action based on the item type
     // const action = item.id === 'language' ? languageModalRef.current?.show : item?.action;
@@ -169,31 +222,59 @@ const ReachOutUs = ({menuProfileSettingList}: any) => {
           keyExtractor={() => Math.random() * 100}
         />
       </View>
+      <ButtonView
+        onPress={() => setIsDeleteUserAccountVisible(true)}
+        style={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          alignSelf: 'center',
+          marginBottom: Metrics.verticalScale(25),
+          marginTop: Metrics.baseMargin,
+        }}>
+        <DeleteIcon />
+        <H4
+          text={'Delete Account'}
+          style={{
+            color: Colors.Colors.RED,
+            alignSelf: 'center',
+            marginLeft: Metrics.smallMargin,
+          }}
+        />
+      </ButtonView>
+      <CustomModal
+        changeDeleteModalVisible={changeDeleteAccountModalVisible}
+        setIsDeleteAccountVisible={setIsDeleteUserAccountVisible}
+        isDeleteAccountVisible={isDeleteUserAccountVisible}
+        title={'Delete Account'}
+        desc={'Are you sure you want to Delete Account?'}
+      />
     </View>
   );
 };
 
 const PrivicyPolicy = () => {
   return (
-    <View style={styles.privicyPolicyWrapper}>
-      <ButtonView
-        onPress={() =>
-          navigate(NavigationRoutes.APP_STACK.WEB_VIEW, {
-            webviewUrl: 'https://creativedesignventure.com/privacy-policy/',
-          })
-        }>
-        <H4 text="Privacy Policy" style={styles.privicyPolicyText} />
-      </ButtonView>
-      <ButtonView
-        onPress={() =>
-          navigate(NavigationRoutes.APP_STACK.WEB_VIEW, {
-            webviewUrl:
-              'https://creativedesignventure.com/terms-and-conditions/',
-          })
-        }>
-        <H4 text="Terms of Services" style={styles.privicyPolicyText} />
-      </ButtonView>
-    </View>
+    <>
+      <View style={styles.privicyPolicyWrapper}>
+        <ButtonView
+          onPress={() =>
+            navigate(NavigationRoutes.APP_STACK.WEB_VIEW, {
+              webviewUrl: 'https://creativedesignventure.com/privacy-policy/',
+            })
+          }>
+          <H4 text="Privacy Policy" style={styles.privicyPolicyText} />
+        </ButtonView>
+        <ButtonView
+          onPress={() =>
+            navigate(NavigationRoutes.APP_STACK.WEB_VIEW, {
+              webviewUrl:
+                'https://creativedesignventure.com/terms-and-conditions/',
+            })
+          }>
+          <H4 text="Terms of Services" style={styles.privicyPolicyText} />
+        </ButtonView>
+      </View>
+    </>
   );
 };
 
