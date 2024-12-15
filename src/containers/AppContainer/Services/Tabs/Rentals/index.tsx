@@ -46,7 +46,6 @@ const Rentals = ({route}) => {
   };
   const emailZustand = useBoundStore((state: any) => state.emailZustand);
   const updatedData = JSON.stringify(rentalData?.data);
-  console.log(emailZustand, 'emailZustandemailZustandemailZustand');
 
   const body = {
     amount: parseFloat(rentalData?.data?.Price?.replace('$', '')) ?? 0,
@@ -118,21 +117,20 @@ const Rentals = ({route}) => {
   const emailModal = useModal();
   useEffect(() => {
     if (stripeData) {
-      initializePaymentSheet();
+      (async () => {
+        await initializePaymentSheet();
+        openPaymentSheet();
+      })();
     }
   }, [stripeData]);
 
   const onOpenSheet = () => {
-    if (isGuest && (emailZustand === null)) {
+    if (isGuest && !emailZustand) {
       emailModal.show();
+      return;
     }
+  
     paymentMutate(body);
-    if (emailZustand) {
-      
-      setTimeout(() => {
-        openPaymentSheet();
-      }, 500);
-    }
   };
 
   return (

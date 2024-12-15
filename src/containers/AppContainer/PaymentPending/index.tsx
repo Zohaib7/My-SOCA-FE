@@ -8,7 +8,7 @@ import {STORAGE_KEYS} from '@Constants/queryKeys';
 import {Colors} from '@Theme/Colors';
 import Fonts from '@Theme/Fonts';
 import Metrics from '@Utility/Metrics';
-import {useStripe} from '@stripe/stripe-react-native';
+import {StripeProvider, useStripe} from '@stripe/stripe-react-native';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
@@ -55,6 +55,7 @@ const PaymentPending = ({route}) => {
       console.error('API call failed:', error);
     },
   });
+console.log(stripeData,'stripeDatastripeDatastripeData');
 
   const initializePaymentSheet = async () => {
     if (!stripeData) return;
@@ -109,17 +110,21 @@ const PaymentPending = ({route}) => {
   };
 
   useEffect(() => {
+    const initializeAndOpenSheet = async () => {
+      await initializePaymentSheet(); // Initialize the payment sheet
+      await openPaymentSheet(); // Open the sheet only after initialization
+    };
+  
     if (stripeData) {
-      initializePaymentSheet();
+      initializeAndOpenSheet();
     }
   }, [stripeData]);
+  
 
-  const onOpenSheet = () => {
-    paymentMutate(body);
-    setTimeout(() => {
-      openPaymentSheet();
-    }, 1000);
+  const onOpenSheet = async () => {
+    paymentMutate(body); // Start the mutation to get Stripe data
   };
+  
 
   const renderItem = ({item}) => (
     <View style={styles.row}>
@@ -140,6 +145,7 @@ const PaymentPending = ({route}) => {
     </View>
   );
   return (
+    <StripeProvider publishableKey={stripeData?.publishableKey || ''}>
     <View style={{flex: 1, backgroundColor: Colors.APP_BACKGROUND}}>
       <Header title="Payments Pending" />
       <View style={styles.playerWrapper}>
@@ -155,37 +161,41 @@ const PaymentPending = ({route}) => {
           )}
         />
       </View>
-      <View
-        style={{
-          justifyContent: 'space-between',
-          marginTop: 'auto',
-          flexDirection: 'row',
-          marginHorizontal: Metrics.scale(20),
-          marginBottom: Metrics.verticalScale(20),
-        }}>
-        <View style={{alignItems: 'center'}}>
-          <H6 text="Total Amount" style={{color: Colors.TEXT_COLOR}} />
-          <H6
-            text={`$${pendingPayment?.totalAmount}` ?? '$000.00'}
-            style={{color: Colors.WHITE}}
-          />
-        </View>
-        <ButtonView
-          onPress={onOpenSheet}
-          style={{
-            backgroundColor: Colors.ICE_BLUE,
-            justifyContent: 'center',
-            padding: Metrics.baseMargin,
-            paddingHorizontal: 40,
-            borderRadius: 6,
-          }}>
-          <H6
-            text="Pay Now"
-            style={{...Fonts.SemiBold(Fonts.Size.xSmall, Colors.BLACK)}}
-          />
-        </ButtonView>
-      </View>
+      {pendingPayment?.pendingPayments?.length > 0 && (
+            <View
+            style={{
+              justifyContent: 'space-between',
+              marginTop: 'auto',
+              flexDirection: 'row',
+              marginHorizontal: Metrics.scale(20),
+              marginBottom: Metrics.verticalScale(20),
+            }}>
+            <View style={{alignItems: 'center'}}>
+              <H6 text="Total Amount" style={{color: Colors.TEXT_COLOR}} />
+              <H6
+                text={`$${pendingPayment?.totalAmount}` ?? '$000.00'}
+                style={{color: Colors.WHITE}}
+              />
+            </View>
+            <ButtonView
+              onPress={onOpenSheet}
+              style={{
+                backgroundColor: Colors.ICE_BLUE,
+                justifyContent: 'center',
+                padding: Metrics.baseMargin,
+                paddingHorizontal: 40,
+                borderRadius: 6,
+              }}>
+              <H6
+                text="Pay Now"
+                style={{...Fonts.SemiBold(Fonts.Size.xSmall, Colors.BLACK)}}
+              />
+            </ButtonView>
+          </View>
+      )}
+  
     </View>
+    </StripeProvider>
   );
 };
 

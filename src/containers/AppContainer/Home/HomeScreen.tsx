@@ -13,7 +13,7 @@ import FlatListHandler from '@Component/FlatlistHandler';
 import H5 from '@Component/Headings/H5';
 import H6 from '@Component/Headings/H6';
 import H7 from '@Component/Headings/H7';
-import {Colors} from '@Theme/Colors';
+import { Colors } from '@Theme/Colors';
 import Fonts from '@Theme/Fonts';
 import Metrics from '@Utility/Metrics';
 import React from 'react';
@@ -29,7 +29,7 @@ import {
 import Header from '@Component/AppHeader';
 import SpinnerLoader from '@Component/SmallLoader';
 import NavigationRoutes from '@Navigator/NavigationRoutes';
-import {navigate} from '@Service/navigationService';
+import { navigate } from '@Service/navigationService';
 import useHomeScreenContainer from './HomeScreenContainer';
 
 const HomeScreen = ({route}) => {
@@ -55,8 +55,13 @@ const HomeScreen = ({route}) => {
 
   const pndg_inv_amt = parentData?.map(elem => elem?.pndg_inv_amt);
   const packageUsage = summaryData?.data[0]?.['Pkg Hrs Balance'];
+  console.log(
+    getAllAnnouncements?.data.length,
+    'getAllAnnouncements?.data?.[0]getAllAnnouncements?.data?.[0]',
+  );
   const handlePressRegisterEvent = () => {
-    Linking.openURL(getAllAnnouncements?.data?.[0]?.url_to_show);
+    if (getAllAnnouncements?.data?.[0]?.url_to_show)
+      Linking.openURL(getAllAnnouncements?.data?.[0]?.url_to_show);
   };
 
   const renderItem = ({item}: any) => {
@@ -361,7 +366,9 @@ const HomeScreen = ({route}) => {
                     />
                     <ButtonView
                       onPress={() =>
-                        navigate(NavigationRoutes.APP_STACK.PAYMENT_PENDING,{email})
+                        navigate(NavigationRoutes.APP_STACK.PAYMENT_PENDING, {
+                          email,
+                        })
                       }>
                       <PerformanceButtonSvg />
                     </ButtonView>
@@ -394,19 +401,21 @@ const HomeScreen = ({route}) => {
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <H6 text="Announcements" style={{color: Colors.TEXT_COLOR}} />
-              <ButtonView
-                onPress={() =>
-                  navigate(NavigationRoutes.APP_STACK.ANNOUNCEMENT)
-                }>
-                <H7
-                  text="See All"
-                  style={{
-                    ...Fonts.SemiBold(Fonts.Size.xxxSmall, Colors.WHITE),
-                    borderBottomWidth: 1,
-                    borderBottomColor: Colors.WHITE,
-                  }}
-                />
-              </ButtonView>
+              {getAllAnnouncements?.data?.length > 0 && (
+                <ButtonView
+                  onPress={() =>
+                    navigate(NavigationRoutes.APP_STACK.ANNOUNCEMENT)
+                  }>
+                  <H7
+                    text="See All"
+                    style={{
+                      ...Fonts.SemiBold(Fonts.Size.xxxSmall, Colors.WHITE),
+                      borderBottomWidth: 1,
+                      borderBottomColor: Colors.WHITE,
+                    }}
+                  />
+                </ButtonView>
+              )}
             </View>
 
             <ImageBackground
@@ -429,6 +438,7 @@ const HomeScreen = ({route}) => {
                   text={getAllAnnouncements?.data?.[0]?.Announcement}
                 />
                 <ButtonView
+                  disabled={getAllAnnouncements?.data.length === 0}
                   onPress={() => handlePressRegisterEvent()}
                   style={{
                     backgroundColor: Colors.ICE_BLUE,

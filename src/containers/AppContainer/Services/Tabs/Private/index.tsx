@@ -183,15 +183,33 @@ const Private = ({route}) => {
 
   useEffect(() => {
     if (stripeData) {
-      initializePaymentSheet();
+      initializePaymentSheet().then(() => {
+        openPaymentSheet(); // Only open the sheet after initialization is complete
+      }).catch((error) => {
+        console.error('Error initializing payment sheet:', error);
+      });
     }
   }, [stripeData]);
+  
+  
 
   const onOpenSheet = () => {
-    paymentMutate(body);
-    setTimeout(() => {
-      openPaymentSheet();
-    }, 500);
+    setLoading(true); // Optional: Show a loading indicator
+  
+    paymentMutate(body, {
+      onSuccess: (response) => {
+        if (response?.data) {
+          setStripeData(response.data); // Triggers useEffect to handle initialization and opening
+        } else {
+          console.error('Stripe data is missing or invalid');
+          setLoading(false); // Hide loading indicator on failure
+        }
+      },
+      onError: (error) => {
+        console.error('Payment mutation error:', error);
+        setLoading(false); // Hide loading indicator on error
+      },
+    });
   };
 
   return (

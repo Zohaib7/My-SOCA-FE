@@ -294,13 +294,13 @@ export const hallOfFameTabs = [
     component: Fiftees,
   },
   {
-    name: '3 Wkts',
-    title: '3 Wkts',
+    name: '4 Wkts',
+    title: '4 Wkts',
     component: ThreeWkts,
   },
   {
-    name: '5 Wkts',
-    title: '5 Wkts',
+    name: '5+ Wkts',
+    title: '5+ Wkts',
     component: FiveWkts,
   },
 ];

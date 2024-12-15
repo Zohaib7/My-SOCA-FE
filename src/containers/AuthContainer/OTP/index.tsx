@@ -1,9 +1,9 @@
-import {LOGOSVG} from '@Asset/logo';
+import {LOGOSVG, mySocaLogo, SOCAPng} from '@Asset/logo';
 import AuthDefaultHeading from '@Component/AuthDefaultHeading';
 import {Colors} from '@Theme/Colors';
 import Metrics from '@Utility/Metrics';
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import OTP from './components/OTP';
 
 const AuthOTP = ({route}) => {
@@ -21,7 +21,8 @@ const AuthOTP = ({route}) => {
         paddingHorizontal: Metrics.scale(20),
         backgroundColor: Colors.APP_BACKGROUND,
       }}>
-      <LOGOSVG style={{alignSelf: 'center', marginTop: -60}} />
+      {/* <LOGOSVG style={{alignSelf: 'center', marginTop: -60}} /> */}
+      <Image source={mySocaLogo}  style={{width: 90, height: 90,alignSelf: 'center'}}/>
       <AuthDefaultHeading
         isOtp={true}
         title="OTP Code Verfication"

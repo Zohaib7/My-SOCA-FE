@@ -351,14 +351,19 @@ export const getSponsors = async (params: any) => {
 };
 
 export const About = async () => {
-  const {data} = await apiRequest({
-    url: `${SERVICE_CONFIG_URLS.PLAYER.ABOUT_US}`,
+  const url = `${SERVICE_CONFIG_URLS.PLAYER.ABOUT_US}`;
+  console.log('API URL:', url); // Log the URL
+  
+  const { data } = await apiRequest({
+    url: url,
     method: API_CONFIG.GET,
     showLoader: false,
     showToast: false,
   });
+
   return data;
 };
+
 
 export const HallOfFame = async (params: any) => {
   const {data} = await apiRequest({

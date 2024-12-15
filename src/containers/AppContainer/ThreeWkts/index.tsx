@@ -18,7 +18,7 @@ const defaultPlayerData = {
 const playerDataArray = new Array(numberOfEntries).fill(defaultPlayerData);
 
 const ThreeWkts = () => {
-  const type = '3_WICKETS';
+  const type = '4_WICKETS';
   const {hallOfFameData, hallOfFameLoading} = useHallOfFameContainer(type);
   const renderItem = ({item}: any) => (
     <View style={styles.row}>
@@ -48,9 +48,9 @@ const ThreeWkts = () => {
             renderItem={renderItem}
             ListHeaderComponent={() => (
               <View style={styles.row}>
-                <Text style={styles.heading}></Text>
-                <Text style={styles.heading}>Best</Text>
-                <Text style={[styles.heading,{marginRight:15}]}>Year</Text>
+              <Text style={[styles.headings,{marginLeft:10}]}>Players</Text>
+              <Text style={[styles.heading,{marginLeft:65}]}>Best</Text>
+              <Text style={[styles.heading,{marginRight:15}]}>Year</Text>
               </View>
             )}
           />
@@ -92,6 +92,12 @@ const styles = StyleSheet.create({
     marginLeft:10,
     color: Colors.ICE_BLUE,
     height: '150%',
+    fontSize:12
+  },
+  headings:{
+    fontWeight: 'bold',
+    textAlign: 'right',
+    color: Colors.DARK_BLUE,
     fontSize:12
   },
 })

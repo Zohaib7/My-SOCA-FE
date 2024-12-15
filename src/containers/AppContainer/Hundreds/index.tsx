@@ -60,8 +60,8 @@ return (
           renderItem={renderItem}
           ListHeaderComponent={() => (
             <View style={styles.row}>
-              <Text style={styles.heading}></Text>
-              <Text style={styles.heading}>Best</Text>
+              <Text style={[styles.headings,{marginLeft:10}]}>Players</Text>
+              <Text style={[styles.heading,{marginLeft:65}]}>Best</Text>
               <Text style={[styles.heading,{marginRight:15}]}>Year</Text>
             </View>
           )}
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
 
   row:{
     flexDirection: 'row',
+    flex:1,
     // borderBottomWidth: 1,
     // borderColor: '#ccc',
     paddingVertical: 10,
@@ -85,6 +86,12 @@ const styles = StyleSheet.create({
   },
   heading: {
     flex: 1,
+    fontWeight: 'bold',
+    textAlign: 'right',
+    color: Colors.DARK_BLUE,
+    fontSize:12
+  },
+  headings:{
     fontWeight: 'bold',
     textAlign: 'right',
     color: Colors.DARK_BLUE,

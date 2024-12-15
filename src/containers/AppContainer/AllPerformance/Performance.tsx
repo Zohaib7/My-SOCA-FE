@@ -99,16 +99,11 @@ const Performance = ({route}) => {
 };
 
 const OverAllPerformance = ({playerId}) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const {playerPerformanceData, isLoading, refetchPlayerPerformanceData, year} =
     useAllPerformanceContainer(playerId);
 
-  const setYear = useBoundStore(state => state.setYearZustand);
 
-  const handleCallbackFunc = item => {
-    setYear(item);
-  };
 
   const {Higest, TotalRuns, Matches, TotalCatches, TotalWickets} =
     playerPerformanceData?.data || {};
@@ -116,17 +111,7 @@ const OverAllPerformance = ({playerId}) => {
     <View style={styles.overAllPerformanceWrapper}>
       <View style={styles.overAllPerformanceInnerWrapper}>
         <H2 text="Over all performance" style={styles.overAllPerformanceText} />
-        <ButtonView
-          style={{flexDirection: 'row', alignItems: 'center'}}
-          onPress={() => setIsModalVisible(true)}>
-          <H4
-            text={
-              year === new Date().getFullYear() ? 'Current Year' : 'Last Year'
-            }
-            style={styles.overAllPerformanceBtnText}
-          />
-          <ArrowDown />
-        </ButtonView>
+   
       </View>
       {isLoading ? (
         <View
@@ -187,6 +172,84 @@ const OverAllPerformance = ({playerId}) => {
         </View> */}
         </View>
       )}
+      {/* <SelectYearModal
+        changeDeleteModalVisible={handleCallbackFunc}
+        setIsDeleteAccountVisible={setIsModalVisible}
+        isDeleteAccountVisible={isModalVisible}
+        refetchPlayerPerformanceData={refetchPlayerPerformanceData}
+      /> */}
+    </View>
+  );
+};
+
+const PlayerStatistics = ({playerId}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const {playerPerformanceData, refetchPlayerPerformanceData, year} = useAllPerformanceContainer(playerId);
+
+  const setYear = useBoundStore(state => state.setYearZustand);
+
+  const handleCallbackFunc = item => {
+    setYear(item);
+  };
+
+  if (!playerPerformanceData || !playerPerformanceData?.data?.data) {
+    return null; // Handle case when data is not available
+  }
+
+  const categories = Object.keys(playerPerformanceData?.data?.data);
+
+  // Define metric groups and exclude unnecessary metrics
+  const groupedMetrics = {
+    Batting: ['Runs Scored','Batting Ave','Highest', "100's", "50's",  'Strike Rate', ].filter(
+      metric => !EXCLUDED_METRICS.includes(metric)
+    ),
+    Bowling: ['Wickets', 'Economy', 'Average', 'Overs Bowled', 'Dot Balls (%)', '4W', '5W', 'Hatrick'].filter(
+      metric => !EXCLUDED_METRICS.includes(metric)
+    ),
+    Fielding: ['Catches', 'Wk Dismisals','Direct R/Os', 'Indirect R/Os', ].filter(
+      metric => !EXCLUDED_METRICS.includes(metric)
+    ),
+  };
+
+  return (
+    <View style={{flex: 1}}>
+      <View style={styles.overAllPerformanceInnerWrapper}>
+        <H2 text="Player statistics" style={styles.overAllPerformanceText} />
+        <ButtonView
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          onPress={() => setIsModalVisible(true)}>
+          <H4
+            text={
+              year === new Date().getFullYear() ? 'Current Year' : 'Last Year'
+            }
+            style={styles.overAllPerformanceBtnText}
+          />
+          <ArrowDown />
+        </ButtonView>
+      </View>
+      <ScrollView>
+        {Object.keys(groupedMetrics).map((section, sectionIndex) => (
+          <View key={sectionIndex} style={sectionIndex > 0 ? styles.metricSection : null}>
+            {groupedMetrics[section].map((metric, rowIndex) => {
+              const showMetric = categories.some(
+                category =>
+                  playerPerformanceData?.data?.data[category][metric] !== undefined &&
+                  playerPerformanceData?.data?.data[category][metric] !== null
+              );
+
+              return showMetric ? (
+                <Metric
+                  key={`${section}-${rowIndex}`} // Unique key for each Metric
+                  metric={metric}
+                  rowIndex={rowIndex}
+                  categories={categories}
+                  playerPerformanceData={playerPerformanceData}
+                />
+              ) : null;
+            })}
+          </View>
+        ))}
+      </ScrollView>
       <SelectYearModal
         changeDeleteModalVisible={handleCallbackFunc}
         setIsDeleteAccountVisible={setIsModalVisible}
@@ -197,52 +260,8 @@ const OverAllPerformance = ({playerId}) => {
   );
 };
 
-const PlayerStatistics = ({playerId}) => {
-  const {playerPerformanceData, refetchPlayerPerformanceData, year} = useAllPerformanceContainer(playerId);
-  console.log(playerPerformanceData?.data?.data, 'playerPerformanceDataplayerPerformanceDataplayerPerformanceData');
-
-  useEffect(() => {}, [playerPerformanceData?.data?.data]);
-
-  if (!playerPerformanceData || !playerPerformanceData?.data?.data) {
-    return null; // Handle case when data is not available
-  }
-
-  const categories = Object.keys(playerPerformanceData?.data?.data);
-  const metrics = Object.keys(playerPerformanceData?.data?.data[categories[0]])
-    .slice(2)
-    .filter(metric => !EXCLUDED_METRICS.includes(metric)); // Filter out excluded metrics
-
-  return (
-    <View>
-      <H2 text="Player statistics" style={styles.overAllPerformanceText} />
-      <View style={styles.row}>
-        <View style={[styles.cell, styles.emptyCell]} />
-        {categories?.map((category, index) => (
-          <View key={index} style={[styles.cell, styles.headerCell]}>
-            <Text
-              style={[styles.checkingText, {color: Colors.Colors.ICE_BLUE}]}>
-              {category}
-            </Text>
-          </View>
-        ))}
-      </View>
-      <ScrollView >
-        {metrics?.map((metric, rowIndex) => (
-          <Metric
-            key={rowIndex} // Add a unique key to each Metric
-            metric={metric}
-            rowIndex={rowIndex}
-            categories={categories}
-            playerPerformanceData={playerPerformanceData}
-          />
-        ))}
-      </ScrollView>
-    </View>
-  );
-};
-
 const Metric = ({metric, rowIndex, categories, playerPerformanceData}) => {
-
+console.log(playerPerformanceData?.data?.data,'categoriescategoriescategories')
   const metricAbbreviations = {
     'Runs Scored': 'Runs',
     'Batting Ave': 'Bat Avg',
@@ -303,6 +322,7 @@ const styles = StyleSheet.create({
   overAllPerformanceInnerWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: Metrics.scale(10),
   },
   overAllPerformanceText: {
     ...Fonts.SemiBold(Fonts.Size.xSmall, '#98D8FA'),
@@ -360,6 +380,9 @@ const styles = StyleSheet.create({
     flex: 0.5, // Adjust width for empty cell
     alignItems: 'flex-start',
     justifyContent: 'center',
+  },
+  metricSection: {
+    marginTop: Metrics.scale(25), // Add spacing between metric groups
   },
   //   metricText: {
   //     minWidth: 30, // Adjust the width as needed
