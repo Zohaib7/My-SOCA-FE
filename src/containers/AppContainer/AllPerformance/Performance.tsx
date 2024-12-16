@@ -227,6 +227,17 @@ const PlayerStatistics = ({playerId}) => {
           <ArrowDown />
         </ButtonView>
       </View>
+      <View style={styles.row}>
+        <View style={[styles.cell, styles.emptyCell]} />
+        {categories?.map((category, index) => (
+          <View key={index} style={[styles.cell, styles.headerCell]}>
+            <Text
+              style={[styles.checkingText, {color: Colors.Colors.ICE_BLUE}]}>
+              {category}
+            </Text>
+          </View>
+        ))}
+      </View>
       <ScrollView>
         {Object.keys(groupedMetrics).map((section, sectionIndex) => (
           <View key={sectionIndex} style={sectionIndex > 0 ? styles.metricSection : null}>
