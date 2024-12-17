@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Colors } from '@Theme/Colors'
 import FlatListHandler from '@Component/FlatlistHandler';
@@ -41,11 +41,10 @@ const {hallOfFameData,hallOfFameLoading}=useHallOfFameContainer(type)
 }
 
 return (
-  <View
+  <ScrollView
     style={{
       flex: 1,
       backgroundColor: Colors.APP_BACKGROUND,
-      justifyContent: 'center',
     }}>
     {hallOfFameLoading ? (
       <SpinnerLoader size={'large'} color={Colors.WHITE} />
@@ -68,7 +67,7 @@ return (
         />
       </View>
     )}
-  </View>
+  </ScrollView>
 );
 }
 

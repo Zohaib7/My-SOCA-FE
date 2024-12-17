@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Colors } from '@Theme/Colors'
 import FlatListHandler from '@Component/FlatlistHandler';
@@ -36,11 +36,10 @@ const FiveWkts = () => {
   );
 
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         backgroundColor: Colors.APP_BACKGROUND,
-        justifyContent: 'center',
       }}>
       {hallOfFameLoading ? (
         <SpinnerLoader size={'large'} color={Colors.WHITE} />
@@ -63,7 +62,7 @@ const FiveWkts = () => {
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 

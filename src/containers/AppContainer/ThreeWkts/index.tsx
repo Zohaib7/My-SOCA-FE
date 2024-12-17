@@ -3,7 +3,7 @@ import useHallOfFameContainer from '@Component/HallofFameTabs/HallOfFameContaine
 import SpinnerLoader from '@Component/SmallLoader';
 import {Colors} from '@Theme/Colors';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 
 const numberOfEntries = 10; // Example number
 
@@ -29,11 +29,10 @@ const ThreeWkts = () => {
   );
 
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         backgroundColor: Colors.APP_BACKGROUND,
-        justifyContent: 'center',
       }}>
       {hallOfFameLoading ? (
         <SpinnerLoader size={'large'} color={Colors.WHITE} />
@@ -56,7 +55,7 @@ const ThreeWkts = () => {
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
